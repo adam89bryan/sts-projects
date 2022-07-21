@@ -1,7 +1,30 @@
 import pandas as pd
 import numpy as np
+import glob
+from os import listdir
 from scipy.fftpack import rfft, rfftfreq, next_fast_len
 from scipy.signal import find_peaks
+
+def drop_duplicate_indices(df):
+    df = df.drop_duplicates(subset='time')
+    df = df.set_index('time')
+    return df
+
+def load_modes(path, id):
+    df_modes = pd.read_csv(path + '\\sites\\' + id + '\\modes\\modes.csv', index_col='Mode')
+    df_modes['Upper Bound'] = df_modes['Frequency (Hz)'].rolling(2).mean().shift(-1)
+    return df_modes
+
+def load_shapes(path, id):
+    modes_path = path + '\\sites\\' + id + '\\modes'
+    num_shapes = len(glob.glob(modes_path + '/shape*.csv'))
+    shapes = {}
+    for i in range(num_shapes):
+        shapes[i+1] = pd.read_csv(path + '\\sites\\' + id + '\\modes\\shapes' + str(i + 1) + '.csv')
+    return shapes
+
+def get_modes(df_result_table, df_modes):
+    return
 
 def fft_df(df, field_name, dt):
 
@@ -37,9 +60,4 @@ def fft_df(df, field_name, dt):
     df['Frequency'] = arrFrequency
     df['Contribution'] = df['Power'] / df['Power'].sum()
 
-    return df
-
-def drop_duplicate_indices(df):
-    df = df.drop_duplicates(subset='time')
-    df = df.set_index('time')
     return df
