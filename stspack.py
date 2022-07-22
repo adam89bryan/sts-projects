@@ -23,8 +23,9 @@ def load_shapes(path, id):
         shapes[i+1] = pd.read_csv(path + '\\sites\\' + id + '\\modes\\shapes' + str(i + 1) + '.csv')
     return shapes
 
-def get_modes(df_result_table, df_modes):
-    return
+def get_modes(df, df_modes):
+    df['Mode'] = df_modes[df['Frequency'] < df_modes['Upper Bound']][0]
+    return df
 
 def fft_df(df, field_name, dt):
 
